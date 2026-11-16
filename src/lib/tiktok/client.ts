@@ -332,7 +332,7 @@ export async function checkSession(http: TikTokHttp): Promise<SessionCheck> {
 
   if (looksLikeRegionBlock(authRes.text)) {
     throw new TikTokError(
-      "TikTok ne request block kar di: ye server TikTok ke blocked region (Hong Kong) mein hai aur TikTok wahan service band kar chuka hai. PAKKA HAL (free aur permanent): bot ke page par sab se upar 'Pakka Hal: Direct Post (Userscript)' card use karein - us me video aap ke phone se seedha TikTok par jati hai, cookies ya proxy ki zaroorat hi nahi.",
+      "TikTok ne request block kar di (region/IP block). Ye masla sirf region ka nahi - Render/AWS jaisa bhi cloud datacenter IP ho, TikTok ka risk control usay shakhi samajhta hai. PAKKA HAL (free aur permanent): bot ke page par sab se upar 'Pakka Hal: Direct Post (Userscript)' card use karein - us me video aap ke device se seedha TikTok par jati hai, cookies ya proxy ki zaroorat hi nahi.",
       "region_blocked",
     );
   }
@@ -353,7 +353,7 @@ export async function checkSession(http: TikTokHttp): Promise<SessionCheck> {
         /* keep empty */
       }
       throw new TikTokError(
-        `TikTok ne cookies accept nahi ki (session expire/block${detail ? ` - TikTok: "${detail}"` : ""}). Wajah: free datacenter proxies ka IP TikTok ko shakhi lagta hai aur wo session reject kar deta hai. PAKKA HAL (free aur permanent): bot ke page par sab se upar 'Pakka Hal: Direct Post (Userscript)' card use karein - video aap ke phone se seedha TikTok par jati hai, cookies ya proxy ki zaroorat hi nahi.`,
+        `TikTok ne cookies accept nahi ki (session expire/block${detail ? ` - TikTok: "${detail}"` : ""}). ASAL WAJAH: cookies aap ke phone ke trusted IP se bani thin, aur TikTok har cloud/datacenter server (Render, AWS - US included) se aane wali cookie-replay ko reject kar deta hai. Ye TikTok ka risk control hai - region USA ho ya koi bhi ho, farq nahi parta. PAKKA HAL (100% guaranteed): bot ke page par sab se upar 'Pakka Hal: Direct Post (Userscript)' card use karein - wahan aap ke apne device ka asli session use hota hai, kabhi block nahi hota.`,
         "session_invalid",
       );
     }
