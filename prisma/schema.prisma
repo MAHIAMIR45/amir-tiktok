@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// A TikTok login created from cookies pasted by the user (Kiwi browser -> Cookie Editor export)
+model TikTokSession {
+  id         String   @id @default(cuid())
+  // Optional HTTP(S) proxy ("http://user:pass@host:port") used for every TikTok request,
+  // because this server's IP sits in a TikTok-blocked region (Hong Kong).
+  proxy      String   @default("")
+  // The browser User-Agent the user logged in from - TikTok binds sessionid loosely to
+  // the issuing UA, so replaying the SAME UA keeps the session alive much longer.
+  userAgent  String   @default("")
+  // Full cookie jar (JSON array of {name, value, domain, path, ...}) for .tiktok.com
+  cookies    String
+  // TikTok datacenter from the tt-target-idc cookie (e.g. useast2a)
+  datacenter String   @default("")
+  userId     String   @default("")
+  username   String   @default("")
+  nickname   String   @default("")
+  avatarUrl  String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// One video posting job (file -> TikTok upload -> publish)
+model UploadJob {
+  id         String   @id @default(cuid())
+  sessionId  String
+  videoPath  String
+  fileName   String   @default("")
+  fileSize   Int      @default(0)
+  title      String
+  hashtags   String   @default("")
+  // "0" = public, "1" = private
+  visibility String   @default("0")
+  // queued | validating | creating_project | uploading | finishing | publishing | done | failed
+  status     String   @default("queued")
+  stage      String   @default("")
+  progress   Int      @default(0)
+  message    String   @default("")
+  error      String   @default("")
+  resultJson String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Free public proxies that passed the live TikTok reachability check.
+model ProxyNode {
+  id        String    @id @default(cuid())
+  host      String
+  port      Int
+  country   String    @default("")
+  latencyMs Int       @default(0)
+  okCount   Int       @default(0)
+  failCount Int       @default(0)
+  lastOkAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  @@unique([host, port])
+}

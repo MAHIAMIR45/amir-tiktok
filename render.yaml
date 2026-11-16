@@ -1,0 +1,18 @@
+# Render blueprint: is repo ko Render me connect karte hi ye settings auto-apply hoti hain.
+# Free plan: Docker runtime, direct mode (server ka apna stable IP, free proxies ke baghair).
+services:
+  - type: web
+    name: tiktok-auto-post-bot
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: TT_PROXY_MODE
+        value: direct
+      - key: DATABASE_URL
+        value: file:/tmp/tiktok-bot.db
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: CHROMIUM_PATH
+        value: /usr/bin/chromium
